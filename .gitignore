@@ -1,0 +1,11 @@
+.idea/
+.env
+*.dec
+.venv
+.vscode/
+.DS_Store
+*.pyc
+.coverage
+.pytest_cache
+__pycache__/
+.hypothesis/

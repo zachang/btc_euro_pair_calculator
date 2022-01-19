@@ -12,7 +12,6 @@ schema = schemathesis.from_asgi("/openapi.json", app)
 
 
 class TestFuzz:
-
     @schema.parametrize()
     @hypothesis.settings(
         suppress_health_check=[

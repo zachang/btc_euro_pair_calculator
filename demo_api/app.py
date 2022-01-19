@@ -6,12 +6,15 @@ from typing import Union
 from fastapi import FastAPI
 from pydantic import BaseModel
 
-from demo_api.tasks import get_currency_pair_from_cache
+from demo_api.api_fetch import get_currency_pair_from_cache
+from demo_api.worker import set_currency_pair
 
 app = FastAPI(title="Bitstack Demo API")
 
+
 class ItemIn(BaseModel):
     amount: int
+
 
 class ItemOut(BaseModel):
     timestamp: str = ""
@@ -20,24 +23,25 @@ class ItemOut(BaseModel):
 
 
 @app.on_event("startup")
-async def startup_event():
-    "call background task to populate cash on or before celerybeat starts schedule"
-    pass
+def startup_event():
+    "call function to populate cash on or before celerybeat starts schedule"
+    set_currency_pair() # might be a better way to do this
 
 
 @app.get("/")
 async def root_get():
-    return {"description": "welcome"}
+    return {"description": "welcome to your favourite btc/eur calculator"}
 
 
-@app.post("/", response_model=ItemOut)
-async def root_get(item: ItemIn):
-    "Resource for currency pair price"
+@app.post("/btceur", response_model=ItemOut)
+async def btc_eur_price(item: ItemIn):
+    "Resource for currency pair price data"
     currency_pair_from_cache = get_currency_pair_from_cache("currency_pair")
     if item and item.amount > 0 and currency_pair_from_cache:
-        print("currency_pair_from_cache",currency_pair_from_cache)
         currency_pair = json.loads(currency_pair_from_cache)
-        currency_pair['price'] = Decimal(currency_pair["price"]) * item.amount
-        currency_pair['timestamp'] = str(datetime.fromtimestamp(int(currency_pair['timestamp'])))
+        currency_pair["price"] = Decimal(currency_pair["price"]) * item.amount
+        currency_pair["timestamp"] = str(
+            datetime.fromtimestamp(int(currency_pair["timestamp"]))
+        )
         return currency_pair
     return item

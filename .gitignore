@@ -5,6 +5,7 @@
 .vscode/
 .DS_Store
 *.pyc
+celerybeat-schedule
 .coverage
 .pytest_cache
 __pycache__/

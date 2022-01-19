@@ -1,12 +1,14 @@
-import redis
 import sys
+
+import redis
+from decouple import config
 
 
 def redis_conn():
     try:
         client = redis.Redis(
-            host="localhost",
-            port=6380,
+            host=config("REDIS_CACHE_HOST", default="localhost"),
+            port=config("REDIS_CACHE_PORT", default=6380, cast=int),
             password=None,
             socket_timeout=5,
         )
@@ -14,9 +16,6 @@ def redis_conn():
         if ping is True:
             return client
     except redis.AuthenticationError:
-        print("AuthenticationError")
         sys.exit(1)
-
-
 
 redis_client = redis_conn()

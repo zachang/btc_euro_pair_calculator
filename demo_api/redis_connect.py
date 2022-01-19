@@ -18,4 +18,5 @@ def redis_conn():
     except redis.AuthenticationError:
         sys.exit(1)
 
+
 redis_client = redis_conn()

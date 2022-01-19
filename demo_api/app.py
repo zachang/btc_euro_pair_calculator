@@ -25,7 +25,7 @@ class ItemOut(BaseModel):
 @app.on_event("startup")
 def startup_event():
     "call function to populate cash on or before celerybeat starts schedule"
-    set_currency_pair() # might be a better way to do this
+    set_currency_pair()  # might be a better way to do this
 
 
 @app.get("/")
